@@ -1,0 +1,10 @@
+<button
+  class="ui-button"
+  [ngClass]="{
+    'ui-button-secondary': uiButtonSecondary,
+    'ui-button-danger': uiButtonDanger
+  }"
+>
+  <span *ngIf="!isLoading; else loader" class="ui-button__text"><ng-content></ng-content></span>
+  <ng-template #loader><ui-loader></ui-loader></ng-template>
+</button>

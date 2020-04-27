@@ -1,0 +1,53 @@
+<ui-page class="auth">
+  <mat-card>
+    <ng-container>
+      <mat-tab-group>
+        <mat-tab [label]="'Вход'">
+          <form class="auth__form" [formGroup]="formGroup">
+            <div class="auth__form-fields">
+              <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input matInput placeholder="Введите Email" formControlName="email" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Пароль</mat-label>
+                <input matInput type="password" placeholder="Введите пароль" formControlName="password" />
+              </mat-form-field>
+
+              <div class="auth__form-actions">
+                <ui-button (click)="login()">
+                  <span>Вход</span>
+                </ui-button>
+              </div>
+            </div>
+          </form>
+        </mat-tab>
+
+        <mat-tab [label]="'Регистрация'">
+          <form class="auth__form" [formGroup]="formGroup">
+            <div class="auth__form-fields">
+              <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input matInput placeholder="Введите Email" formControlName="email" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Пароль</mat-label>
+                <input matInput type="password" placeholder="Введите пароль" formControlName="password" />
+              </mat-form-field>
+
+              <div class="auth__form-actions">
+                <ui-button (click)="registration()">
+                  <span>Регистрация</span>
+                </ui-button>
+              </div>
+            </div>
+          </form>
+        </mat-tab>
+      </mat-tab-group>
+
+      <div></div>
+    </ng-container>
+  </mat-card>
+</ui-page>
