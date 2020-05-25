@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AngularUniversalModule } from '@nestjs/ng-universal';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
 
 import { AppServerModule } from '../src/main.server';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
+import { TokenModule } from './modules/token/token.module';
+import { configModule } from './configure.root';
 
 const environment = process.env.NODE_ENV || 'development';
 
@@ -16,16 +17,14 @@ const environment = process.env.NODE_ENV || 'development';
             bootstrap: AppServerModule,
             viewsPath: join(process.cwd(), 'dist/v1/browser'),
         }),
-        AuthModule,
-        UserModule,
-        ConfigModule.forRoot({
-            envFilePath: `.env.${environment}`,
-            isGlobal: true,
-        }),
+        configModule,
         MongooseModule.forRoot(process.env.MONGODB_WRITE_CONNECTION_STRING, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         }),
+        AuthModule,
+        UserModule,
+        TokenModule
     ],
     controllers: [],
 })

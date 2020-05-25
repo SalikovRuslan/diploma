@@ -6,6 +6,7 @@ import { RolesEnum } from '../enums/roles.enum';
 export interface IUser extends Document {
     email: string;
     password: string;
+    status: string;
     roles: RolesEnum[];
     passwordHint: string;
     secretQuestion: string;

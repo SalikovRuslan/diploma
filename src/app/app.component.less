@@ -1,8 +1,101 @@
+@mobile: 600px;
 
 .app {
-
   .app__header {
-    height: 75px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    background: rgb(92, 232, 196);
     border-bottom: 1px solid rgba(0, 0, 0, 0.38);
+
+    @media (max-width: @mobile) {
+      height: 40px;
+      padding: 3px 5px;
+    }
+
+    .app__header-burger-button {
+      display: none;
+      width: 15px;
+      height: 15px;
+      border: 1px solid black;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 100px;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      @media (max-width: @mobile) {
+        display: inline-block;
+      }
+    }
+  }
+
+  .app__main {
+    display: flex;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .app__aside {
+    width: 250px;
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background: white;
+    border-right: 1px solid rgba(0, 0, 0, 0.5);
+    z-index: 10003;
+
+    @media (max-width: @mobile) {
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: -250px;
+
+      &.app__aside--active {
+        left: 0;
+      }
+    }
+
+    a + a {
+      margin-top: 10px;
+    }
+
+    .app__aside-link {
+      padding: 5px 10px 5px 20px;
+      font-weight: 600;
+    }
+  }
+
+  .app__content {
+    padding: 30px;
+    flex: 1;
+
+    @media (max-width: @mobile) {
+      padding: 15px;
+    }
+  }
+
+  .wrapper {
+    display: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 10002;
+
+    @media (max-width: @mobile) {
+      display: block;
+    }
   }
 }
+
+
+//#22ffe4
+//#22e3ff
+//#22acff
+//#2274ff
+//#223dff
+//#3e22ff

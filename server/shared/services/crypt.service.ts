@@ -10,4 +10,8 @@ export class CryptService {
     async hash(s: string, salt: number | string): Promise<string> {
         return await bcryptjs.hash(s, salt);
     }
+
+    async compare(str: string, hash: string): Promise<boolean> {
+        return await bcryptjs.compare(str, hash)
+    }
 }

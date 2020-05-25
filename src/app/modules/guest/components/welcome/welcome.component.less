@@ -1,13 +1,26 @@
+@mobile: 600px;
 
 .welcome {
   display: flex;
   justify-content: space-between;
 
+  @media (max-width: @mobile) {
+    flex-direction: column;
+  }
+
   .welcome__body {
     flex: 1 1 80%;
+
+    @media (max-width: @mobile) {
+      flex: 1;
+    }
   }
 
   .welcome__side {
     flex: 0 0 20%;
+
+    @media (max-width: @mobile) {
+      flex: 1;
+    }
   }
 }

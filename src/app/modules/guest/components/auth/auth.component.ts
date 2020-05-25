@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -15,12 +16,12 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     unsubscribe$ = new Subject();
 
-    constructor(private fb: FormBuilder, private authService: AuthService) {}
+    constructor(private router: Router, private fb: FormBuilder, private authService: AuthService) {}
 
     ngOnInit(): void {
         this.formGroup = this.fb.group({
-            email: [],
-            password: [],
+            email: ['1@1.1'],
+            password: ['1@1.1'],
         });
     }
 
@@ -29,7 +30,16 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.unsubscribe$.complete();
     }
 
-    login() {}
+    login() {
+        const form = this.formGroup.value;
+
+        this.authService
+            .login(form.email, form.password)
+            .pipe(takeUntil(this.unsubscribe$))
+            .subscribe(() => {
+                this.router.navigate(['/accounts']);
+            });
+    }
 
     registration() {
         const form = this.formGroup.value;

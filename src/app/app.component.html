@@ -1,4 +1,17 @@
 <div class="app">
-  <header class="app__header"></header>
-  <router-outlet></router-outlet>
+  <header class="app__header">
+    <span class="app__header-burger-button" (click)="isAsideActive = !isAsideActive"></span>
+  </header>
+  <div class="app__main">
+    <div *ngIf="isAsideActive" class="wrapper" (click)="isAsideActive = false"></div>
+    <aside *ngIf="!isGuest" class="app__aside" [ngClass]="{ 'app__aside--active': isAsideActive }">
+      <a class="app__aside-link" routerLink="/accounts">Аккаунты</a>
+      <a class="app__aside-link" routerLink="/generation">Генератор</a>
+      <a class="app__aside-link" routerLink="/leak_report">Отчет об утечке</a>
+    </aside>
+
+    <div class="app__content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </div>
