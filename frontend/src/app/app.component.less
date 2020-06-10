@@ -45,7 +45,7 @@
     padding: 10px;
     background: white;
     border-right: 1px solid rgba(0, 0, 0, 0.5);
-    z-index: 10003;
+    z-index: 13;
 
     @media (max-width: @mobile) {
       height: 100vh;
@@ -69,8 +69,12 @@
   }
 
   .app__content {
-    padding: 30px;
+    padding: 10px;
     flex: 1;
+
+    &.app__content--auth {
+      max-width: 600px;
+    }
 
     @media (max-width: @mobile) {
       padding: 15px;
@@ -84,14 +88,13 @@
     width: 100%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.2);
-    z-index: 10002;
+    z-index: 12;
 
     @media (max-width: @mobile) {
       display: block;
     }
   }
 }
-
 
 //#22ffe4
 //#22e3ff

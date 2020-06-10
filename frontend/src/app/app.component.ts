@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+
 import { UserService } from './modules/shared/services/user.service';
+import { AccountPopupService } from './modules/accounts/services/account-popup.service';
 
 @Component({
     selector: 'app-root',

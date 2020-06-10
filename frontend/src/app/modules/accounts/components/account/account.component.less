@@ -1,0 +1,36 @@
+.account {
+
+  .account__form {
+    display: flex;
+    flex-direction: column;
+
+    .account__form-icon {
+      cursor: pointer;
+
+      &.account__form-icon--go-to {
+        transform: scale(-1, 1);
+      }
+    }
+  }
+
+  .account__actions {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    button {
+      height: 36px;
+    }
+
+    button + button {
+      margin-left: 10px;
+    }
+  }
+
+  .account__action {
+    .account__action-spinner {
+      margin: 0 auto;
+    }
+  }
+}

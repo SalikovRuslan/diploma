@@ -10,7 +10,7 @@
       <a class="app__aside-link" routerLink="/leak_report">Отчет об утечке</a>
     </aside>
 
-    <div class="app__content">
+    <div class="app__content" [ngClass]="{ 'app__content--auth': !isGuest }">
       <router-outlet></router-outlet>
     </div>
   </div>

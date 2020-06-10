@@ -1,10 +1,11 @@
-import { BadRequestException, Body, Controller, Get, Post, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { ReadableUser } from '../user/models/readable-user.model';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -20,6 +21,12 @@ export class AuthController {
     @Post('/login')
     async login(@Body(ValidationPipe) data: LoginDto): Promise<ReadableUser> {
         return await this.authService.login(data);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/load')
+    async load(@Req() req: any): Promise<ReadableUser> {
+        return this.authService.loadUser(req.user._id);
     }
 
     @Get('/confirm')

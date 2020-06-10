@@ -6,6 +6,7 @@ import { CryptService } from '../../shared/services/crypt.service';
 import { IUser } from './interfaces/user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RolesEnum } from './enums/roles.enum';
+import { LogoutTimeEnum } from './enums/logoutTime.enum';
 
 @Injectable()
 export class UserService {
@@ -17,7 +18,7 @@ export class UserService {
             throw new ConflictException('User already exist');
         }
         const hash = await this.hashPassword(createUserDto.password);
-        const createdUser = new this.userModel({ ...createUserDto, password: hash, roles });
+        const createdUser = new this.userModel({ ...createUserDto, password: hash, roles, logoutTime: LogoutTimeEnum.oneHour });
         return await createdUser.save();
     }
 

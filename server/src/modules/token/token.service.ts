@@ -11,6 +11,10 @@ export class TokenService {
 
     async create(createUserTokenDto: CreateUserTokenDto): Promise<IUserToken> {
         const userToken = new this.tokenModel(createUserTokenDto);
+        const tokens = await this.tokenModel.find({ uId: createUserTokenDto.uId.toHexString() }).exec();
+        if (tokens.length > 5) {
+            tokens.forEach(token => token.remove());
+        }
         return await userToken.save();
     }
 
