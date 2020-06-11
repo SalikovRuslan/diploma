@@ -1,10 +1,13 @@
 <div class="app">
-  <header class="app__header">
-    <span class="app__header-burger-button" (click)="isAsideActive = !isAsideActive"></span>
+  <header *ngIf="!isGuest" class="app__header">
+    <mat-icon class="app__header-burger-button" (click)="isAsideActive = !isAsideActive">menu</mat-icon>
   </header>
   <div class="app__main">
     <div *ngIf="isAsideActive" class="wrapper" (click)="isAsideActive = false"></div>
     <aside *ngIf="!isGuest" class="app__aside" [ngClass]="{ 'app__aside--active': isAsideActive }">
+      <div class="app__aside-close">
+        <mat-icon (click)="isAsideActive = false">close</mat-icon>
+      </div>
       <a class="app__aside-link" routerLink="/accounts">Аккаунты</a>
       <a class="app__aside-link" routerLink="/generation">Генератор</a>
       <a class="app__aside-link" routerLink="/leak_report">Отчет об утечке</a>

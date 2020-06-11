@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import * as crypto from 'crypto-js';
 
 import { UserService } from './modules/shared/services/user.service';
 
@@ -10,9 +11,12 @@ import { UserService } from './modules/shared/services/user.service';
 export class AppComponent {
     isAsideActive: boolean;
 
-    constructor(private userService: UserService) {}
+    constructor(private userService: UserService) {
+        const crypt = crypto;
+    }
 
     get isGuest(): boolean {
         return this.userService.isGuest;
     }
+
 }

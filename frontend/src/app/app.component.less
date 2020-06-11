@@ -1,25 +1,27 @@
 @mobile: 600px;
 
 .app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
   .app__header {
     display: flex;
     align-items: center;
     height: 60px;
-    background: rgb(92, 232, 196);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.38);
+    background: #3f51b5;
+    box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+    z-index: 14;
 
     @media (max-width: @mobile) {
       height: 40px;
       padding: 3px 5px;
+      z-index: 0;
     }
 
     .app__header-burger-button {
       display: none;
-      width: 15px;
-      height: 15px;
-      border: 1px solid black;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 100px;
+      color: white;
 
       &:hover {
         background: rgba(0, 0, 0, 0.2);
@@ -32,13 +34,15 @@
   }
 
   .app__main {
+    width: 100%;
     display: flex;
     max-width: 1300px;
     margin: 0 auto;
+    flex: 1;
   }
 
   .app__aside {
-    width: 250px;
+    width: 220px;
     height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;
@@ -51,10 +55,23 @@
       height: 100vh;
       position: absolute;
       top: 0;
-      left: -250px;
+      left: -220px;
 
       &.app__aside--active {
         left: 0;
+      }
+    }
+
+    .app__aside-close {
+      display: none;
+      justify-content: flex-end;
+
+      @media (max-width: @mobile) {
+        display: flex;
+      }
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.2);
       }
     }
 
@@ -69,15 +86,10 @@
   }
 
   .app__content {
-    padding: 10px;
     flex: 1;
 
     &.app__content--auth {
       max-width: 600px;
-    }
-
-    @media (max-width: @mobile) {
-      padding: 15px;
     }
   }
 

@@ -33,12 +33,11 @@ export class AccountsListComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         this.accountsService
             .getAccounts()
-            .pipe(
-                delay(1000),
-                tap(() => (this.isLoading = false)),
-                takeUntil(this.unsubscribe$),
-            )
-            .subscribe(accounts => (this.accounts = accounts));
+            .pipe(delay(500), takeUntil(this.unsubscribe$))
+            .subscribe(accounts => {
+                this.isLoading = false;
+                this.accounts = accounts;
+            });
     }
 
     openAccountPopup(account?: AccountModel) {
