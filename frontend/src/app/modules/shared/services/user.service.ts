@@ -9,12 +9,7 @@ export class UserService {
     private userUpdatedSubject = new Subject<UserModel>();
     private user: UserModel;
 
-    constructor() {
-        try {
-            const currentUser = new UserModel(JSON.parse(localStorage.getItem('currentUser')));
-            this.setUser(currentUser);
-        } catch (e) {}
-    }
+    constructor() {}
 
     getUser(): UserModel {
         return this.user;
@@ -30,6 +25,6 @@ export class UserService {
     }
 
     get isGuest(): boolean {
-        return !this.getUser();
+        return this.getUser()?.email === undefined;
     }
 }

@@ -5,6 +5,7 @@ import { configModule } from './configure.root';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { TokenModule } from './modules/token/token.module';
+import { AccountsModule } from './modules/accounts/accounts.module';
 
 const environment = process.env.NODE_ENV || 'development';
 
@@ -18,6 +19,7 @@ const environment = process.env.NODE_ENV || 'development';
         AuthModule,
         UserModule,
         TokenModule,
+        AccountsModule,
     ],
     controllers: [],
 })

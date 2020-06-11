@@ -1,0 +1,57 @@
+<div class="account">
+  <h2>
+    <ng-container *ngIf="isCreateMode">Добавление элемента</ng-container>
+    <ng-container *ngIf="!isCreateMode">Редактирование элемента</ng-container>
+  </h2>
+
+  <form class="account__form" [formGroup]="accountForm">
+    <mat-form-field>
+      <mat-label>Имя</mat-label>
+      <input formControlName="name" matInput />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Логин</mat-label>
+      <input formControlName="username" matInput />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Пароль</mat-label>
+      <input formControlName="password" matInput [type]="isPasswordVisible ? 'text' : 'password'" />
+      <mat-icon class="account__form-icon" matSuffix (click)="isPasswordVisible = !isPasswordVisible">
+        {{ isPasswordVisible ? 'visibility_off' : 'visibility' }}
+      </mat-icon>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Url</mat-label>
+      <input formControlName="url" matInput type="url" />
+      <mat-icon class="account__form-icon account__form-icon--go-to" matSuffix (click)="goToAccountUrl()" title="Перейти">reply</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Заметки</mat-label>
+      <textarea formControlName="notes" matInput></textarea>
+    </mat-form-field>
+  </form>
+
+  <div class="account__actions">
+    <ng-container *ngIf="isCreateMode">
+      <button mat-raised-button color="primary" (click)="createAccount()">
+        <ng-container *ngIf="!isCreateLoading">Создать</ng-container>
+        <mat-spinner *ngIf="isCreateLoading" class="account__action-spinner" diameter="20"></mat-spinner>
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="!isCreateMode">
+      <button class="account__action" mat-raised-button color="primary" (click)="updateAccount()">
+        <ng-container *ngIf="!isUpdateLoading">Редактировать</ng-container>
+        <mat-spinner *ngIf="isUpdateLoading" class="account__action-spinner" diameter="20"></mat-spinner>
+      </button>
+      <button class="account__action" mat-raised-button color="warn" (click)="deleteAccount()">
+        <ng-container *ngIf="!isDeleteLoading">Удалить</ng-container>
+        <mat-spinner *ngIf="isDeleteLoading" class="account__action-spinner" diameter="20"></mat-spinner>
+      </button>
+    </ng-container>
+  </div>
+</div>

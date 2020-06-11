@@ -1,0 +1,37 @@
+<div class="accounts-list">
+  <div class="accounts-list__header">
+    <h2 class="accounts-list__title">Список аккаунтов</h2>
+    <button mat-raised-button (click)="openAccountPopup()">Добавить</button>
+  </div>
+  <mat-divider></mat-divider>
+
+  <ng-template #loader>
+    <div class="accounts-list__loader"><mat-spinner diameter="20"></mat-spinner></div>
+  </ng-template>
+
+  <div *ngIf="!isLoading; else loader">
+    <mat-nav-list>
+      <ng-container *ngFor="let account of accounts">
+        <mat-list-item>
+          <div class="accounts__account" (click)="openAccountPopup(account)">
+            <mat-icon>account_circle</mat-icon>
+            <div class="accounts__account-main">
+              <span class="accounts__account-name">{{ account.name }}</span>
+              <span class="accounts__account-username">{{ account.username }}</span>
+            </div>
+            <span class="accounts__account-actions">
+              <button mat-icon-button color="primary" title="Редактировать" (click)="openAccountPopup(account)">
+                <mat-icon>edit</mat-icon>
+              </button>
+
+              <button mat-icon-button color="warn" title="Удалить" (click)="removeAccount($event, account._id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </span>
+          </div>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+      </ng-container>
+    </mat-nav-list>
+  </div>
+</div>

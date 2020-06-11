@@ -37,7 +37,7 @@ export class AuthService {
     public async registration(createdUserDto: CreateUserDto): Promise<boolean> {
         const createdUser = await this.userService.create(createdUserDto, [RolesEnum.user]);
         // token for confirm user, when mail server will add to project, delete auto confirm;
-        const token = await this.sendConfirmation(createdUser);
+        // const token = await this.sendConfirmation(createdUser);
         // await this.confirm(token);
 
         return true;
@@ -52,8 +52,12 @@ export class AuthService {
                 status: user.status,
                 roles: user.roles,
             };
-            const token = await this.generateToken(tokenPayload);
-            const expireAt = moment().add(1, 'day').toISOString();
+            const token = await this.generateToken(tokenPayload, { expiresIn: user.logoutTime});
+            const expireAt = moment()
+                .add(user.logoutTime, 's')
+                .toISOString(true);
+
+            console.log(expireAt);
 
             await this.saveToken({
                 token,
@@ -69,6 +73,23 @@ export class AuthService {
         throw new BadRequestException('Invalid credentials');
     }
 
+    public async loadUser(userId): Promise<ReadableUser> {
+        const user = await this.userService.find(userId);
+        if (user) {
+            return new ReadableUser(user);
+        }
+
+        throw new UnauthorizedException();
+    }
+
+    private async generateToken(data: ITokenPayload, options?: SignOptions): Promise<string> {
+        return this.jwtService.sign(data, options);
+    }
+
+    private async saveToken(createUserTokenDto: CreateUserTokenDto) {
+        return await this.tokenService.create(createUserTokenDto);
+    }
+
     private async sendConfirmation(user: IUser) {
         const expiresIn = 60 * 60 * 24; // 24 hours
         const tokenPayload = {
@@ -77,7 +98,9 @@ export class AuthService {
             roles: user.roles,
         };
 
-        const expireAt = moment().add(1, 'day').toISOString();
+        const expireAt = moment()
+            .add(1, 'day')
+            .toISOString(true);
         const token = await this.generateToken(tokenPayload, { expiresIn });
         await this.saveToken({ token, uId: user._id, expireAt });
         return token;
@@ -115,10 +138,6 @@ export class AuthService {
         throw new BadRequestException('Confirmation error');
     }
 
-    private async generateToken(data: ITokenPayload, options?: SignOptions): Promise<string> {
-        return this.jwtService.sign(data, options);
-    }
-
     private async verifyToken(token): Promise<ITokenPayload> {
         try {
             const data = this.jwtService.verify(token) as ITokenPayload;
@@ -131,9 +150,5 @@ export class AuthService {
         } catch (error) {
             throw new UnauthorizedException();
         }
-    }
-
-    private async saveToken(createUserTokenDto: CreateUserTokenDto) {
-        return await this.tokenService.create(createUserTokenDto);
     }
 }
