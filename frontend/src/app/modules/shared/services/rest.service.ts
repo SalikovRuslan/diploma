@@ -10,7 +10,7 @@ import { UserService } from './user.service';
 export class RestService {
     constructor(private http: HttpClient, private userService: UserService) {}
 
-    public post(url: string, data: any, options?: any): Observable<any> {
+    public post(url: string, data?: any, options?: any): Observable<any> {
         return this.http.post(url, data);
     }
 

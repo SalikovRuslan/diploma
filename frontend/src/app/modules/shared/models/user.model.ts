@@ -4,6 +4,7 @@ export class UserModel {
     status: string;
     logoutTime: number;
     accessToken: string;
+    cryptToken: string;
 
     constructor(props?: any) {
         if (!!props) {
@@ -12,6 +13,7 @@ export class UserModel {
             this.status = props.status;
             this.logoutTime = props.logoutTime;
             this.accessToken = props.accessToken;
+            this.cryptToken = props.cryptToken;
         }
     }
 }

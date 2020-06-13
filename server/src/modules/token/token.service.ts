@@ -29,4 +29,8 @@ export class TokenService {
     async exists(uId: string, token: string): Promise<boolean> {
         return await this.tokenModel.exists({ uId, token });
     }
+
+    async getTokenModel(token: string): Promise<Partial<IUserToken>> {
+        return await this.tokenModel.findOne({ token }).exec();
+    }
 }

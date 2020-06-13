@@ -10,7 +10,7 @@
   </ng-template>
 
   <div *ngIf="!isLoading; else loader">
-    <ng-template #noAccounts><h2>Ви ще не додали жодного запису.</h2></ng-template>
+    <ng-template #noAccounts><h3>Ви ще не додали жодного запису.</h3></ng-template>
 
     <mat-nav-list *ngIf="accounts?.length; else noAccounts">
       <ng-container *ngFor="let account of accounts">

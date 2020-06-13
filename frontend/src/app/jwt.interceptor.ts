@@ -11,9 +11,10 @@ export class JwtInterceptor implements HttpInterceptor {
 
     intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
         const accessToken = this.authService.getAuthToken();
+        const cryptToken = this.authService.getCryptToken();
         if (accessToken) {
             request = request.clone({
-                setHeaders: { Authorization: `Bearer ${accessToken}` },
+                setHeaders: { Authorization: `Bearer ${accessToken}`, Crypt: `${cryptToken}` },
             });
         }
 

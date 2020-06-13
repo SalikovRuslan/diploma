@@ -20,4 +20,8 @@ export class UpdateAccountDto {
     @IsString()
     @IsOptional()
     url: string;
+
+    @IsString()
+    @IsOptional()
+    notes: string;
 }

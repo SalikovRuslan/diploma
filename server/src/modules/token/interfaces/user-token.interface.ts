@@ -4,4 +4,6 @@ export interface IUserToken extends Document {
     readonly token: string;
     readonly uId: string;
     readonly expireAt: string;
+    readonly encryptedEmailForCheck: string;
+    readonly encryptedMasterKey: string;
 }

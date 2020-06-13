@@ -8,6 +8,7 @@ import { AccountsService } from './accounts.service';
 
 import { AccountSchema } from './schemas/account.schema';
 import { AccountsController } from './accounts.controller';
+import { TokenModule } from '../token/token.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { AccountsController } from './accounts.controller';
         configModule,
         UserModule,
         SharedModule,
+        TokenModule,
     ],
     controllers: [AccountsController],
     providers: [AccountsService],

@@ -12,9 +12,11 @@ import { UserModel } from '../../shared/models/user.model';
 })
 export class AuthService {
     private authToken: string;
+    private cryptToken: string;
 
     constructor(private restService: RestService, private userService: UserService) {
         this.authToken = localStorage.getItem('authToken');
+        this.cryptToken = localStorage.getItem('cryptToken');
     }
 
     public registration(email: string, password: string): Observable<number> {
@@ -27,12 +29,13 @@ export class AuthService {
                 const user = new UserModel(res);
                 this.userService.setUser(user);
                 this.setAuthToken(user.accessToken);
+                this.setCryptToken(user.cryptToken);
             }),
         );
     }
 
     public loadUser(): Observable<void> {
-        if (!this.getAuthToken()) {
+        if (!this.getAuthToken() || !this.getCryptToken()) {
             this.userService.setUser(new UserModel());
             return of();
         }
@@ -54,14 +57,14 @@ export class AuthService {
         );
     }
 
-    public logout() {
-        this.userService.setUser(null);
-        // TODO: послать запрос для удаления токена
-    }
-
-    private removeAuthToken() {
-        localStorage.removeItem('authToken');
-        this.authToken = null;
+    public logout(): Observable<void> {
+        return this.restService.post('/api/auth/logout').pipe(
+            tap(() => {
+                this.removeAuthToken();
+                this.removeCryptToken();
+                this.userService.setUser(null);
+            }),
+        );
     }
 
     private setAuthToken(token: string) {
@@ -69,7 +72,26 @@ export class AuthService {
         this.authToken = token;
     }
 
+    private removeAuthToken() {
+        localStorage.removeItem('authToken');
+        this.authToken = null;
+    }
+
     public getAuthToken() {
         return this.authToken;
+    }
+
+    private setCryptToken(token: string) {
+        localStorage.setItem('cryptToken', token);
+        this.cryptToken = token;
+    }
+
+    private removeCryptToken() {
+        localStorage.removeItem('cryptToken');
+        this.authToken = null;
+    }
+
+    public getCryptToken() {
+        return this.cryptToken;
     }
 }

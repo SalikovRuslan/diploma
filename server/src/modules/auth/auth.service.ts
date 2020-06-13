@@ -19,6 +19,7 @@ import { ITokenPayload } from './interfaces/token-payload.interface';
 
 import { RolesEnum } from '../user/enums/roles.enum';
 import { statusEnum } from '../user/enums/status.enum';
+import { IUserTokens } from '../token/interfaces/tokens.interface';
 
 @Injectable()
 export class AuthService {
@@ -52,34 +53,57 @@ export class AuthService {
                 status: user.status,
                 roles: user.roles,
             };
-            const token = await this.generateToken(tokenPayload, { expiresIn: user.logoutTime});
+
+            const crypto = this.cryptService.crypto;
+
+            // хеш от пароля которым потом будем шифровать все аккаунты
+            const masterKeyHash = crypto.SHA256(password).toString();
+            // токен которым будем шифровать хеш от пароля, храним на фронте и передаем каждый раз
+            const cryptToken = crypto.SHA256(crypto.lib.WordArray.random(16)).toString();
+            // зашифрованый email для проверки токена при лоаде юзера
+            const encryptedEmailForCheck = this.cryptService.encryptData(email, cryptToken);
+
+            // зашифрованый хеш от мастера пароля, храним в базе
+            const encryptedMasterKey = this.cryptService.encryptData(masterKeyHash, cryptToken);
+
+            const token = await this.generateToken(tokenPayload, { expiresIn: user.logoutTime });
             const expireAt = moment()
                 .add(user.logoutTime, 's')
                 .toISOString(true);
-
-            console.log(expireAt);
 
             await this.saveToken({
                 token,
                 expireAt,
                 uId: user._id,
+                encryptedEmailForCheck,
+                encryptedMasterKey,
             });
 
             const readableUser = user.toObject() as ReadableUser;
+
             readableUser.accessToken = token;
+            readableUser.cryptToken = cryptToken;
 
             return new ReadableUser(readableUser);
         }
         throw new BadRequestException('Invalid credentials');
     }
 
-    public async loadUser(userId): Promise<ReadableUser> {
+    public async loadUser(userId, { authToken, cryptToken }: IUserTokens): Promise<ReadableUser> {
+        // проверяем, что email который зашифрован в таблице токенов идентичен с email юзера id которого лежит в authToken
+        const tokenModel = await this.tokenService.getTokenModel(authToken);
         const user = await this.userService.find(userId);
-        if (user) {
+        const email = this.cryptService.decryptData(tokenModel.encryptedEmailForCheck, cryptToken);
+
+        if (user && user.email === email) {
             return new ReadableUser(user);
         }
 
         throw new UnauthorizedException();
+    }
+
+    public async logout(userId: string, authToken: string): Promise<boolean> {
+        return await this.tokenService.delete(userId, authToken).then(res => !!res.ok);
     }
 
     private async generateToken(data: ITokenPayload, options?: SignOptions): Promise<string> {
@@ -102,7 +126,7 @@ export class AuthService {
             .add(1, 'day')
             .toISOString(true);
         const token = await this.generateToken(tokenPayload, { expiresIn });
-        await this.saveToken({ token, uId: user._id, expireAt });
+        await this.saveToken({ token, uId: user._id, expireAt, encryptedMasterKey: '', encryptedEmailForCheck: '' });
         return token;
 
         // const confirmLink = `${this.clientAppUrl}/auth/confirm?token=${token}`;

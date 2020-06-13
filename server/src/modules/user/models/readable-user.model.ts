@@ -9,6 +9,7 @@ export class ReadableUser {
     secretQuestion: string;
     logoutTime: LogoutTimeEnum;
     accessToken?: string;
+    cryptToken: string;
 
     constructor(fields) {
         if (!!fields) {
@@ -19,6 +20,7 @@ export class ReadableUser {
             this.secretQuestion = fields.secretQuestion;
             this.logoutTime = fields.logoutTime;
             this.accessToken = fields.accessToken;
+            this.cryptToken = fields.cryptToken;
         }
     }
 }

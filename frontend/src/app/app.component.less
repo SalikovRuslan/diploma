@@ -76,12 +76,27 @@
     }
 
     a + a {
-      margin-top: 10px;
+      margin-top: 5px;
     }
 
     .app__aside-link {
+      font-size: 16px;
       padding: 5px 10px 5px 20px;
+      color: rgba(0, 0, 0, 0.9);
       font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        color: rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    .app__aside-logout {
+      margin-top: 15px;
+
+      mat-spinner {
+        stroke: rgba(0, 0, 0, 0.9);
+      }
     }
   }
 

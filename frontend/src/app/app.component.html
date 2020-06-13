@@ -11,6 +11,10 @@
       <a class="app__aside-link" routerLink="/accounts">Аккаунты</a>
       <a class="app__aside-link" routerLink="/generation">Генератор</a>
       <a class="app__aside-link" routerLink="/leak_report">Отчет об утечке</a>
+      <div class="app__aside-logout">
+        <mat-spinner *ngIf="isLogoutLoading" diameter="16"></mat-spinner>
+        <a *ngIf="!isLogoutLoading" class="app__aside-link" (click)="logout()">Вихід</a>
+      </div>
     </aside>
 
     <div class="app__content" [ngClass]="{ 'app__content--auth': !isGuest }">

@@ -8,4 +8,8 @@ export class CreateUserTokenDto {
     uId: mongoose.Types.ObjectId;
     @IsDateString()
     expireAt: string;
+    @IsString()
+    encryptedEmailForCheck: string;
+    @IsString()
+    encryptedMasterKey: string;
 }

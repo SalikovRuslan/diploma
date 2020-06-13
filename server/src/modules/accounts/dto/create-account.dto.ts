@@ -16,4 +16,8 @@ export class CreateAccountDto {
     @IsString()
     @IsOptional()
     url: string;
+
+    @IsString()
+    @IsOptional()
+    notes: string;
 }
