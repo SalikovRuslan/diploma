@@ -1,3 +1,5 @@
+@mobile: 600px;
+
 .accounts-list {
   .accounts-list__header {
     padding: 10px;
@@ -27,9 +29,13 @@
       padding-left: 20px;
 
       .accounts__account-main-field {
-        max-width: 200px;
+        max-width: 300px;
         overflow: hidden;
         text-overflow: ellipsis;
+
+        @media (max-width: @mobile) {
+          max-width: 150px;
+        }
       }
     }
 

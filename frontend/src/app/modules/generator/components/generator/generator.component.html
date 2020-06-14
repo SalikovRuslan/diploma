@@ -1,0 +1,35 @@
+<div class="generator">
+  <div>
+    <mat-card>
+      <mat-card-content class="generator__password">{{ generatedPassword }}</mat-card-content>
+    </mat-card>
+  </div>
+
+  <form [formGroup]="formGroup">
+    <div class="generator__slider-container">
+      <span>Довжина пароля:</span>
+      <span class="generator__password-length">
+        {{ passwordLength }}
+      </span>
+
+      <mat-slider class="generator__slider" formControlName="length" [max]="20" [min]="4" [step]="1" color="primary"></mat-slider>
+    </div>
+
+    <div class="generator__checkboxes">
+      <mat-checkbox class="generator__checkbox" formControlName="uppercase" color="primary">A-Z</mat-checkbox>
+      <mat-checkbox class="generator__checkbox" formControlName="lowercase" color="primary">a-z</mat-checkbox>
+      <mat-checkbox class="generator__checkbox" formControlName="numbers" color="primary">0-9</mat-checkbox>
+      <mat-checkbox class="generator__checkbox" formControlName="symbols" color="primary">!@#$%^&*</mat-checkbox>
+    </div>
+  </form>
+
+  <div class="generator__actions">
+    <button mat-flat-button color="primary" (click)="generatePassword()">
+      <ng-container>Згенерувати новий пароль</ng-container>
+    </button>
+
+    <button mat-flat-button (click)="copyPassword()">
+      <ng-container>Копіювати</ng-container>
+    </button>
+  </div>
+</div>

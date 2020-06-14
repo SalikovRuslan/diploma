@@ -29,6 +29,6 @@ export class AppComponent {
         this.authService
             .logout()
             .pipe(finalize(() => (this.isLogoutLoading = false)))
-            .subscribe(() => this.router.navigate(['/admin']));
+            .subscribe(() => this.router.navigate(['/auth']));
     }
 }

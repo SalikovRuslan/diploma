@@ -7,13 +7,15 @@ import { GuestModule } from './modules/guest/guest.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
 import { MaterialModule } from './material.module';
 import { AppRoutingModule } from './app-routing.module';
+import { UiModule } from './modules/ui/ui.module';
+import { GeneratorModule } from './modules/generator/generator.module';
 
 import { AuthService } from './modules/guest/services/auth.service';
 import { ErrorInterceptor } from './error.interceptor';
 import { JwtInterceptor } from './jwt.interceptor';
 
 import { AppComponent } from './app.component';
-import { UiModule } from './modules/ui/ui.module';
+
 
 @NgModule({
     declarations: [AppComponent],
@@ -24,8 +26,9 @@ import { UiModule } from './modules/ui/ui.module';
         MaterialModule,
         GuestModule,
         AccountsModule,
-        AppRoutingModule,
         UiModule,
+        GeneratorModule,
+        AppRoutingModule,
     ],
     providers: [
         {

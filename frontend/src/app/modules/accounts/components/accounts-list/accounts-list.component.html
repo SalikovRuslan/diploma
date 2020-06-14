@@ -1,7 +1,7 @@
 <div class="accounts-list">
   <div class="accounts-list__header">
-    <h2 class="accounts-list__title">Список аккаунтов</h2>
-    <button mat-raised-button (click)="openAccountPopup()">Добавить</button>
+    <h2 class="accounts-list__title">Записи</h2>
+    <button mat-raised-button (click)="openAccountPopup()">Додати</button>
   </div>
   <mat-divider></mat-divider>
 
@@ -22,11 +22,15 @@
               <span class="accounts__account-username accounts__account-main-field">{{ account.username }}</span>
             </div>
             <span class="accounts__account-actions">
-              <button mat-icon-button color="primary" title="Редактировать" (click)="openAccountPopup(account)">
+              <button mat-icon-button title="Копіювати" (click)="copyPassword($event, account.password)">
+                <mat-icon>file_copy</mat-icon>
+              </button>
+
+              <button mat-icon-button color="primary" title="Редагувати" (click)="openAccountPopup(account)">
                 <mat-icon>edit</mat-icon>
               </button>
 
-              <button mat-icon-button color="warn" title="Удалить" (click)="removeAccount($event, account._id)">
+              <button mat-icon-button color="warn" title="Видалити" (click)="removeAccount($event, account._id)">
                 <mat-icon>delete</mat-icon>
               </button>
             </span>
