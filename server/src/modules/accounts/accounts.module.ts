@@ -25,5 +25,6 @@ import { TokenModule } from '../token/token.module';
     ],
     controllers: [AccountsController],
     providers: [AccountsService],
+    exports: [AccountsService],
 })
 export class AccountsModule {}

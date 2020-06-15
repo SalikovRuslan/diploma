@@ -2,15 +2,16 @@ import { Injectable, NotAcceptableException, NotFoundException, Req } from '@nes
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { CryptService } from '../../shared/services/crypt.service';
+import { TokenService } from '../token/token.service';
+
 import { DateUtils } from '../../shared/utils/date.utils';
 
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { IAccount } from './interfaces/account.interface';
 import { DeleteAccountDto } from './dto/delete-account.dto';
-import { TokenService } from '../token/token.service';
 import { IUserTokens } from '../token/interfaces/tokens.interface';
-import { CryptService } from '../../shared/services/crypt.service';
 import { IReadableUserModel } from './interfaces/readable-user.model';
 import { AccountContainerInterface } from './interfaces/account-container.interface';
 
@@ -27,8 +28,7 @@ export class AccountsService {
         userId: string,
         { authToken, cryptToken }: IUserTokens,
     ): Promise<IAccount> {
-        const { encryptedMasterKey } = await this.tokenService.getTokenModel(authToken);
-        const decryptedMasterKey = this.cryptService.decryptData(encryptedMasterKey, cryptToken);
+        const decryptedMasterKey = await this.tokenService.getDecryptedMasterKey(authToken, cryptToken);
         const encryptedAccountContainer = this.encryptAccountContainer(createAccountDto, decryptedMasterKey);
 
         const account = new this.accountModel({ uId: userId, date: DateUtils.getNow(), encryptedContainer: encryptedAccountContainer });
@@ -36,8 +36,7 @@ export class AccountsService {
     }
 
     public async getAll(userId: string, { authToken, cryptToken }: IUserTokens): Promise<IReadableUserModel[]> {
-        const { encryptedMasterKey } = await this.tokenService.getTokenModel(authToken);
-        const decryptedMasterKey = this.cryptService.decryptData(encryptedMasterKey, cryptToken);
+        const decryptedMasterKey = await this.tokenService.getDecryptedMasterKey(authToken, cryptToken);
         const accounts: IAccount[] = await this.accountModel.find({ uId: userId });
 
         return !!accounts
@@ -81,6 +80,15 @@ export class AccountsService {
         return await account.remove();
     }
 
+    async deleteAllAccounts(userId: string): Promise<boolean> {
+        const accounts = await this.accountModel.find({ uId: userId });
+        for (let account of accounts) {
+            await account.remove();
+        }
+
+        return true;
+    }
+
     private async findAccount(id: string): Promise<IAccount> {
         let account;
         try {
@@ -95,14 +103,34 @@ export class AccountsService {
         return account;
     }
 
-    private decryptAccountContainer(container: string, key: string): AccountContainerInterface {
+    decryptAccountContainer(container: string, key: string): AccountContainerInterface {
         try {
             return JSON.parse(this.cryptService.decryptData(container, key));
         } catch (e) {}
     }
 
-    private encryptAccountContainer(container: AccountContainerInterface, masterKey: string): string {
+    encryptAccountContainer(container: AccountContainerInterface, masterKey: string): string {
         return this.cryptService.encryptData(JSON.stringify(container), masterKey);
+    }
+
+    async changeMasterKeyForAllAccounts(userId: string, oldMasterKey: string, newMasterKey: string): Promise<boolean> {
+        const allAccounts = await this.accountModel.find({ uId: userId });
+
+        const oldMasterKeyHash = this.cryptService.crypto.SHA256(oldMasterKey).toString();
+        const newMasterKeyHash = this.cryptService.crypto.SHA256(newMasterKey).toString();
+
+        // расшифровываем все контейнеры юзера
+        allAccounts.forEach(account => {
+            const decryptedContainer = this.decryptAccountContainer(account.encryptedContainer, oldMasterKeyHash);
+            account.encryptedContainer = this.encryptAccountContainer(decryptedContainer, newMasterKeyHash);
+        });
+
+        // зашифровываем все контейнеры юзера новым мастер паролем
+        for (const account of allAccounts) {
+            await account.save();
+        }
+
+        return true;
     }
 
     private createAccountContainer(data: CreateAccountDto | UpdateAccountDto): AccountContainerInterface {

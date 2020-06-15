@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import { CryptService } from '../../shared/services/crypt.service';
 import { TokenService } from '../token/token.service';
 import { UserService } from '../user/user.service';
+import { AccountsService } from '../accounts/accounts.service';
 
 import { CreateUserTokenDto } from '../token/dto/create-user-token.dto';
 import { CreateUserDto } from '../user/dto/create-user.dto';
@@ -31,6 +32,7 @@ export class AuthService {
         private readonly cryptService: CryptService,
         private readonly tokenService: TokenService,
         private readonly userService: UserService,
+        private accountsService: AccountsService,
     ) {
         this.clientAppUrl = this.configService.get<string>('FE_APP_URL');
     }
@@ -66,12 +68,12 @@ export class AuthService {
             // зашифрованый хеш от мастера пароля, храним в базе
             const encryptedMasterKey = this.cryptService.encryptData(masterKeyHash, cryptToken);
 
-            const token = await this.generateToken(tokenPayload, { expiresIn: user.logoutTime });
+            const token = await this.generateJwtToken(tokenPayload, { expiresIn: user.logoutTime });
             const expireAt = moment()
                 .add(user.logoutTime, 's')
                 .toISOString(true);
 
-            await this.saveToken({
+            await this.saveJwtToken({
                 token,
                 expireAt,
                 uId: user._id,
@@ -106,11 +108,11 @@ export class AuthService {
         return await this.tokenService.delete(userId, authToken).then(res => !!res.ok);
     }
 
-    private async generateToken(data: ITokenPayload, options?: SignOptions): Promise<string> {
+    private async generateJwtToken(data: ITokenPayload, options?: SignOptions): Promise<string> {
         return this.jwtService.sign(data, options);
     }
 
-    private async saveToken(createUserTokenDto: CreateUserTokenDto) {
+    private async saveJwtToken(createUserTokenDto: CreateUserTokenDto) {
         return await this.tokenService.create(createUserTokenDto);
     }
 
@@ -125,8 +127,8 @@ export class AuthService {
         const expireAt = moment()
             .add(1, 'day')
             .toISOString(true);
-        const token = await this.generateToken(tokenPayload, { expiresIn });
-        await this.saveToken({ token, uId: user._id, expireAt, encryptedMasterKey: '', encryptedEmailForCheck: '' });
+        const token = await this.generateJwtToken(tokenPayload, { expiresIn });
+        await this.saveJwtToken({ token, uId: user._id, expireAt, encryptedMasterKey: '', encryptedEmailForCheck: '' });
         return token;
 
         // const confirmLink = `${this.clientAppUrl}/auth/confirm?token=${token}`;
@@ -141,16 +143,37 @@ export class AuthService {
         // });
     }
 
-    async changePassword(changePasswordDto: ChangePasswordDto): Promise<boolean> {
-        const password = await this.userService.hashPassword(changePasswordDto.password);
+    async changePassword(userId: string, changePasswordDto: ChangePasswordDto): Promise<boolean> {
+        const user = await this.userService.find(userId);
 
-        await this.userService.update(changePasswordDto._id, { password });
-        await this.tokenService.deleteAll(changePasswordDto._id);
-        return true;
+        if (user && (await this.cryptService.compare(changePasswordDto.oldPassword, user.password))) {
+            const password = await this.userService.hashPassword(changePasswordDto.newPassword);
+
+            // шифруем
+            await this.accountsService.changeMasterKeyForAllAccounts(userId, changePasswordDto.oldPassword, changePasswordDto.newPassword);
+            await this.userService.update(userId, { password });
+            await this.tokenService.deleteAll(userId);
+            return true;
+        } else {
+            throw new BadRequestException('Invalid credentials');
+        }
+    }
+
+    async deleteUser(userId: string, masterPassword: string): Promise<boolean> {
+        const user = await this.userService.find(userId);
+
+        if (user && (await this.cryptService.compare(masterPassword, user.password))) {
+            await this.tokenService.deleteAll(userId);
+            await this.accountsService.deleteAllAccounts(userId);
+            await user.remove();
+            return true;
+        } else {
+            throw new BadRequestException('Invalid credentials');
+        }
     }
 
     async confirm(token: string): Promise<IUser> {
-        const data = await this.verifyToken(token);
+        const data = await this.verifyJwtToken(token);
         const user = await this.userService.find(data._id);
 
         await this.tokenService.delete(data._id, token);
@@ -162,7 +185,7 @@ export class AuthService {
         throw new BadRequestException('Confirmation error');
     }
 
-    private async verifyToken(token): Promise<ITokenPayload> {
+    private async verifyJwtToken(token): Promise<ITokenPayload> {
         try {
             const data = this.jwtService.verify(token) as ITokenPayload;
             const tokenExists = await this.tokenService.exists(data._id, token);

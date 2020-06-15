@@ -11,6 +11,7 @@ import { TokenModule } from '../token/token.module';
 import { configModule } from '../../configure.root';
 import { JwtStrategy } from './jwt.strategy';
 import { SharedModule } from '../../shared/shared.module';
+import { AccountsModule } from '../accounts/accounts.module';
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { SharedModule } from '../../shared/shared.module';
         UserModule,
         TokenModule,
         SharedModule,
+        AccountsModule,
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy],

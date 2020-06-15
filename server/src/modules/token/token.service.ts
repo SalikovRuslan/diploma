@@ -4,10 +4,11 @@ import { Model } from 'mongoose';
 
 import { IUserToken } from './interfaces/user-token.interface';
 import { CreateUserTokenDto } from './dto/create-user-token.dto';
+import { CryptService } from '../../shared/services/crypt.service';
 
 @Injectable()
 export class TokenService {
-    constructor(@InjectModel('Token') private readonly tokenModel: Model<IUserToken>) {}
+    constructor(@InjectModel('Token') private readonly tokenModel: Model<IUserToken>, private cryptService: CryptService) {}
 
     async create(createUserTokenDto: CreateUserTokenDto): Promise<IUserToken> {
         const userToken = new this.tokenModel(createUserTokenDto);
@@ -19,11 +20,11 @@ export class TokenService {
     }
 
     async delete(uId: string, token: string): Promise<{ ok?: number; n?: number }> {
-        return await this.tokenModel.deleteOne({ uId, token });
+        return this.tokenModel.deleteOne({uId, token});
     }
 
     async deleteAll(uId: string): Promise<{ ok?: number; n?: number }> {
-        return await this.tokenModel.deleteMany({ uId });
+        return this.tokenModel.deleteMany({uId});
     }
 
     async exists(uId: string, token: string): Promise<boolean> {
@@ -32,5 +33,10 @@ export class TokenService {
 
     async getTokenModel(token: string): Promise<Partial<IUserToken>> {
         return await this.tokenModel.findOne({ token }).exec();
+    }
+
+    async getDecryptedMasterKey(authToken, cryptToken): Promise<string> {
+        const { encryptedMasterKey } = await this.getTokenModel(authToken);
+        return this.cryptService.decryptData(encryptedMasterKey, cryptToken);
     }
 }

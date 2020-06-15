@@ -1,18 +1,24 @@
 <div class="account">
   <h2>
-    <ng-container *ngIf="isCreateMode">Добавление элемента</ng-container>
-    <ng-container *ngIf="!isCreateMode">Редактирование элемента</ng-container>
+    <ng-container *ngIf="isCreateMode">Створення запису</ng-container>
+    <ng-container *ngIf="!isCreateMode">Редагування запису</ng-container>
   </h2>
 
   <form class="account__form" [formGroup]="accountForm">
     <mat-form-field>
       <mat-label>Имя</mat-label>
       <input formControlName="name" matInput />
+      <mat-error *ngIf="accountForm.get('name').hasError('required')">
+        Обов'язкове поле
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Логин</mat-label>
       <input formControlName="username" matInput />
+      <mat-error *ngIf="accountForm.get('username').hasError('required')">
+        Обов'язкове поле
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field>
@@ -21,6 +27,9 @@
       <mat-icon class="account__form-icon" matSuffix (click)="isPasswordVisible = !isPasswordVisible">
         {{ isPasswordVisible ? 'visibility_off' : 'visibility' }}
       </mat-icon>
+      <mat-error *ngIf="accountForm.get('password').hasError('required')">
+        Обов'язкове поле
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field>
@@ -30,28 +39,28 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Заметки</mat-label>
+      <mat-label>Нотатки</mat-label>
       <textarea formControlName="notes" matInput></textarea>
     </mat-form-field>
   </form>
 
   <div class="account__actions">
     <ng-container *ngIf="isCreateMode">
-      <button mat-raised-button color="primary" (click)="createAccount()">
-        <ng-container *ngIf="!isCreateLoading">Создать</ng-container>
+      <button mat-flat-button color="primary" (click)="createAccount()">
+        <ng-container *ngIf="!isCreateLoading">Створити</ng-container>
         <mat-spinner *ngIf="isCreateLoading" class="account__action-spinner" diameter="20"></mat-spinner>
       </button>
     </ng-container>
 
     <ng-container *ngIf="!isCreateMode">
-      <button class="account__action" mat-raised-button color="primary" (click)="updateAccount()">
-        <ng-container *ngIf="!isUpdateLoading">Редактировать</ng-container>
+      <button class="account__action" mat-flat-button color="primary" (click)="updateAccount()">
+        <ng-container *ngIf="!isUpdateLoading">Редагувати</ng-container>
         <mat-spinner *ngIf="isUpdateLoading" class="account__action-spinner" diameter="20"></mat-spinner>
       </button>
-      <button class="account__action" mat-raised-button color="warn" (click)="deleteAccount()">
-        <ng-container *ngIf="!isDeleteLoading">Удалить</ng-container>
-        <mat-spinner *ngIf="isDeleteLoading" class="account__action-spinner" diameter="20"></mat-spinner>
-      </button>
     </ng-container>
+
+    <button class="account__action" mat-flat-button (click)="closePopup(false)">
+      <ng-container *ngIf="!isDeleteLoading">Закрити</ng-container>
+    </button>
   </div>
 </div>

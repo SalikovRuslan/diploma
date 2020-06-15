@@ -8,6 +8,9 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { ReadableUser } from '../user/models/readable-user.model';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { DeleteAccountDto } from '../accounts/dto/delete-account.dto';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -15,8 +18,6 @@ export class AuthController {
 
     @Post('/registration')
     async registration(@Body(ValidationPipe) data: CreateUserDto): Promise<boolean> {
-        const a = '';
-        console.log(a);
         return await this.authService.registration(data);
     }
 
@@ -45,5 +46,19 @@ export class AuthController {
     @Post('/logout')
     async logout(@Req() req: any): Promise<boolean> {
         return this.authService.logout(req.user._id, this.headersService.getBearerToken(req.headers));
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('/change_password')
+    async changePassword(@Body(ValidationPipe) body: ChangePasswordDto, @Req() req: any): Promise<any> {
+        const { _id } = req.user;
+        return await this.authService.changePassword(_id, body);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('/delete_user')
+    async deleteUser(@Body(ValidationPipe) body: DeleteUserDto, @Req() req: any): Promise<any> {
+        const { _id } = req.user;
+        return await this.authService.deleteUser(_id, body.masterPassword);
     }
 }

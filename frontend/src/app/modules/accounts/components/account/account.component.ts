@@ -1,6 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { finalize, takeUntil } from 'rxjs/operators';
 
@@ -8,7 +9,7 @@ import { AccountModel } from '../../models/account.model';
 import { AccountsService } from '../../services/accounts.service';
 
 @Component({
-    selector: 'app-account',
+    selector: 'accounts-account',
     templateUrl: './account.component.html',
     styleUrls: ['./account.component.less'],
 })
@@ -25,6 +26,7 @@ export class AccountComponent implements OnInit, OnDestroy {
     unsubscribe$ = new Subject();
 
     constructor(
+        private router: Router,
         private fb: FormBuilder,
         public dialogRef: MatDialogRef<AccountComponent>,
         @Inject(MAT_DIALOG_DATA) public matDialogData: { account: AccountModel },
@@ -52,11 +54,15 @@ export class AccountComponent implements OnInit, OnDestroy {
         });
     }
 
-    goToAccountUrl() {}
+    goToAccountUrl() {
+        const url = this.accountForm.value.url;
+        window.open('http://' + url);
+        // this.router.navigateByUrl(url)
+    }
 
     createAccount() {
-        console.log('click');
         if (this.isCreateLoading || !this.accountForm.valid) {
+            this.accountForm.markAllAsTouched();
             return;
         }
 
@@ -73,6 +79,7 @@ export class AccountComponent implements OnInit, OnDestroy {
 
     updateAccount() {
         if (this.isUpdateLoading || !this.accountForm.valid) {
+            this.accountForm.markAllAsTouched();
             return;
         }
 
@@ -87,14 +94,7 @@ export class AccountComponent implements OnInit, OnDestroy {
             .subscribe(() => this.closePopup(true));
     }
 
-    private closePopup(success: boolean) {
+    closePopup(success: boolean) {
         this.dialogRef.close(success);
-    }
-
-    deleteAccount() {
-        const confirmDelete = confirm('Підтвердіть видалення');
-        if (confirmDelete) {
-            this.accountsService.deleteAccount(this.inputPopupData.account._id).subscribe(() => this.dialogRef.close(true));
-        }
     }
 }

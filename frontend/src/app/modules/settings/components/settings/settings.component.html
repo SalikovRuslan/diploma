@@ -1,0 +1,87 @@
+<div class="settings">
+  <div class="settings__header">
+    <h2 class="settings__title">Налаштування</h2>
+  </div>
+  <mat-divider></mat-divider>
+
+  <div class="settings__body">
+    <mat-card>
+      <mat-card-title>Поточний Email</mat-card-title>
+
+      <input matInput type="email" disabled [ngModel]="currentEmail" />
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Зміна мастер паролю</mat-card-title>
+        <mat-card-subtitle>Після зміни мастер паролю, вам потрібно буде увійти в свій аккаунт знову</mat-card-subtitle>
+      </mat-card-header>
+
+      <form class="settings__form" [formGroup]="changePasswordFormGroup">
+        <mat-form-field class="settings__form-field">
+          <mat-label>Поточний мастер пароль</mat-label>
+          <input formControlName="oldPassword" matInput [type]="isOldPasswordVisible ? 'text' : 'password'" />
+          <mat-icon class="password__form-icon" matSuffix (click)="isOldPasswordVisible = !isOldPasswordVisible">
+            visibility
+          </mat-icon>
+          <mat-error *ngIf="oldPasswordControl.hasError('required')">
+            Обов'язкове поле
+          </mat-error>
+          <mat-error *ngIf="oldPasswordIsNotCorrect">
+            Невірний мастер пароль
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="settings__form-field">
+          <mat-label>Новий мастер пароль</mat-label>
+          <input formControlName="newPassword" matInput [type]="isNewPasswordVisible ? 'text' : 'password'" />
+          <mat-icon class="password__form-icon" matSuffix (click)="isNewPasswordVisible = !isNewPasswordVisible">
+            visibility
+          </mat-icon>
+          <mat-error *ngIf="newPasswordControl.hasError('required')">
+            Обов'язкове поле
+          </mat-error>
+        </mat-form-field>
+      </form>
+
+      <div class="settings__actions">
+        <button mat-flat-button color="primary" (click)="changePassword()">
+          <ng-container>Змінити мастер пароль</ng-container>
+        </button>
+      </div>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Видалення профілю</mat-card-title>
+        <mat-card-subtitle
+          >Після видалення профілю, всі дані будуть втрачені, для збереження потрібно зробити
+          <a routerLink="/backup">бекап записів</a></mat-card-subtitle
+        >
+      </mat-card-header>
+
+      <form class="settings__form" [formGroup]="deletePasswordFormGroup">
+        <mat-form-field class="settings__form-field">
+          <mat-label>Поточний мастер пароль</mat-label>
+          <input matInput type="password" formControlName="masterPassword" />
+          <input formControlName="masterPassword" matInput [type]="isPasswordVisible ? 'text' : 'password'" />
+          <mat-icon class="password__form-icon" matSuffix (click)="isPasswordVisible = !isPasswordVisible">
+            visibility
+          </mat-icon>
+          <mat-error *ngIf="deleteAccountPasswordControl.hasError('required')">
+            Обов'язкове поле
+          </mat-error>
+        </mat-form-field>
+      </form>
+
+      <div class="settings__actions">
+        <button mat-flat-button color="warn" (click)="deleteUser()">
+          <ng-container>Видалити профіль</ng-container>
+        </button>
+      </div>
+      <mat-error *ngIf="masterPasswordForDeleteIsNotCorrect">
+        Невірний мастер пароль
+      </mat-error>
+    </mat-card>
+  </div>
+</div>

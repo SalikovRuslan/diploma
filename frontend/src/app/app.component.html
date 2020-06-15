@@ -8,9 +8,16 @@
       <div class="app__aside-close">
         <mat-icon (click)="isAsideActive = false">close</mat-icon>
       </div>
-      <a class="app__aside-link" routerLink="/accounts">Аккаунты</a>
-      <a class="app__aside-link" routerLink="/generation">Генератор</a>
-      <a class="app__aside-link" routerLink="/leak_report">Отчет об утечке</a>
+      <a class="app__aside-link" routerLink="/accounts" routerLinkActive="app__aside-link--active" (click)="isAsideActive = false"
+        >Записи</a
+      >
+      <a class="app__aside-link" routerLink="/generation" routerLinkActive="app__aside-link--active" (click)="isAsideActive = false"
+        >Генератор</a
+      >
+      <a class="app__aside-link" routerLink="/settings" routerLinkActive="app__aside-link--active" (click)="isAsideActive = false"
+        >Налаштування</a
+      >
+      <a class="app__aside-link" routerLink="/backup" routerLinkActive="app__aside-link--active" (click)="isAsideActive = false">Бекап</a>
       <div class="app__aside-logout">
         <mat-spinner *ngIf="isLogoutLoading" diameter="16"></mat-spinner>
         <a *ngIf="!isLogoutLoading" class="app__aside-link" (click)="logout()">Вихід</a>

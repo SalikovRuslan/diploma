@@ -2,42 +2,53 @@
   <mat-card>
     <ng-container>
       <mat-tab-group>
-        <mat-tab [label]="'Вход'">
+        <mat-tab [label]="'Вхід'">
           <form class="auth__form" [formGroup]="formGroup">
             <div class="auth__form-fields">
               <mat-form-field>
                 <mat-label>Email</mat-label>
-                <input matInput placeholder="Введите Email" formControlName="email" />
+                <input matInput placeholder="Введіть Email" formControlName="email" />
               </mat-form-field>
 
               <mat-form-field>
                 <mat-label>Пароль</mat-label>
-                <input matInput type="password" placeholder="Введите пароль" formControlName="password" />
+                <input matInput type="password" placeholder="Введіть пароль" formControlName="password" />
               </mat-form-field>
 
               <div class="auth__form-actions">
                 <button mat-flat-button color="primary" (click)="login()">Вхід</button>
               </div>
+
+              <mat-error *ngIf="isInvalidCredentials">
+                Невірний логін або пароль
+              </mat-error>
             </div>
           </form>
         </mat-tab>
 
-        <mat-tab [label]="'Регистрация'">
+        <mat-tab [label]="'Реєстрація'">
           <form class="auth__form" [formGroup]="formGroup">
             <div class="auth__form-fields">
               <mat-form-field>
                 <mat-label>Email</mat-label>
-                <input matInput placeholder="Введите Email" formControlName="email" />
+                <input matInput placeholder="Введіть Email" formControlName="email" />
               </mat-form-field>
 
               <mat-form-field>
                 <mat-label>Пароль</mat-label>
-                <input matInput type="password" placeholder="Введите пароль" formControlName="password" />
+                <input matInput type="password" placeholder="Введіть пароль" formControlName="password" />
               </mat-form-field>
 
               <div class="auth__form-actions">
                 <button mat-flat-button color="primary" (click)="registration()">Реєстрація</button>
               </div>
+
+              <mat-error *ngIf="emailAlreadyExist">
+                Дана email адреса вже зареєстрована
+              </mat-error>
+              <mat-error *ngIf="registrationError">
+                Помилка при реєстрації
+              </mat-error>
             </div>
           </form>
         </mat-tab>

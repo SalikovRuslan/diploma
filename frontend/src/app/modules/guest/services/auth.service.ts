@@ -67,6 +67,10 @@ export class AuthService {
         );
     }
 
+    deleteUser(masterPassword) {
+        return this.restService.post('/api/auth/delete_user', { masterPassword });
+    }
+
     private setAuthToken(token: string) {
         localStorage.setItem('authToken', token);
         this.authToken = token;

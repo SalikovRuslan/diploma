@@ -6,7 +6,6 @@ import { Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class UserService {
-    private userUpdatedSubject = new Subject<UserModel>();
     private user: UserModel;
 
     constructor() {}
@@ -17,11 +16,10 @@ export class UserService {
 
     setUser(user: UserModel) {
         this.user = user;
-        this.userUpdatedSubject.next(user);
     }
 
-    get userUpdated$(): Observable<UserModel> {
-        return this.userUpdatedSubject.asObservable();
+    resetUser() {
+        this.user = new UserModel();
     }
 
     get isGuest(): boolean {

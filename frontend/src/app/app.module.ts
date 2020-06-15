@@ -9,12 +9,14 @@ import { MaterialModule } from './material.module';
 import { AppRoutingModule } from './app-routing.module';
 import { UiModule } from './modules/ui/ui.module';
 import { GeneratorModule } from './modules/generator/generator.module';
+import { SettingsModule } from './modules/settings/settings.module';
+import { AppComponent } from './app.component';
 
 import { AuthService } from './modules/guest/services/auth.service';
 import { ErrorInterceptor } from './error.interceptor';
 import { JwtInterceptor } from './jwt.interceptor';
 
-import { AppComponent } from './app.component';
+import { BackupModule } from './modules/backup/backup.module';
 
 
 @NgModule({
@@ -28,6 +30,8 @@ import { AppComponent } from './app.component';
         AccountsModule,
         UiModule,
         GeneratorModule,
+        SettingsModule,
+        BackupModule,
         AppRoutingModule,
     ],
     providers: [

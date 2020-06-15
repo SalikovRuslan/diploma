@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { catchError, takeUntil } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
 
 import { AuthService } from '../../services/auth.service';
+import { SnackBarService } from '../../../shared/services/snack-bar.service';
 
 @Component({
     selector: 'guest-auth',
@@ -13,15 +14,23 @@ import { AuthService } from '../../services/auth.service';
 })
 export class AuthComponent implements OnInit, OnDestroy {
     formGroup: FormGroup;
+    isInvalidCredentials: boolean;
+    emailAlreadyExist: boolean;
+    registrationError: boolean;
 
     unsubscribe$ = new Subject();
 
-    constructor(private router: Router, private fb: FormBuilder, private authService: AuthService) {}
+    constructor(
+        private router: Router,
+        private snackBarService: SnackBarService,
+        private fb: FormBuilder,
+        private authService: AuthService,
+    ) {}
 
     ngOnInit(): void {
         this.formGroup = this.fb.group({
-            email: ['1@1.1'],
-            password: ['1@1.1'],
+            email: ['11@1.1', Validators.required],
+            password: ['111', Validators.required],
         });
     }
 
@@ -31,25 +40,56 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     login() {
+        if (!this.formGroup.valid) {
+            this.formGroup.markAllAsTouched();
+        }
+
         const form = this.formGroup.value;
 
         this.authService
             .login(form.email, form.password)
-            .pipe(takeUntil(this.unsubscribe$))
+            .pipe(
+                catchError(err => {
+                    console.log(err);
+                    if (err.status === 400) {
+                        this.isInvalidCredentials = true;
+                    }
+
+                    return throwError(err);
+                }),
+                takeUntil(this.unsubscribe$),
+            )
             .subscribe(() => {
                 this.router.navigate(['/accounts']);
             });
     }
 
     registration() {
+        this.emailAlreadyExist = false;
+        this.registrationError = false;
+
+        if (!this.formGroup.valid) {
+            this.formGroup.markAllAsTouched();
+        }
+
         const form = this.formGroup.value;
 
         this.authService
             .registration(form.email, form.password)
-            .pipe(takeUntil(this.unsubscribe$))
-            .subscribe((data) => {
-                console.log('success');
-                console.log(data);
+            .pipe(
+                catchError(err => {
+                    if (err.status === 409) {
+                        this.emailAlreadyExist = true;
+                    } else {
+                        this.registrationError = true;
+                    }
+
+                    return throwError(err);
+                }),
+                takeUntil(this.unsubscribe$),
+            )
+            .subscribe(() => {
+                this.snackBarService.show('Аккаунт створено успішно, будь ласка скористайтесь формою входу', 'ОК');
             });
     }
 }
